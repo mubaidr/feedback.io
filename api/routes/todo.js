@@ -1,50 +1,42 @@
-var express = require('express');
-var todoRoutes = express.Router();
+const express = require('express');
 
-var Todo = require('../models/todo');
+const todoRoutes = express.Router();
+
+const Todo = require('../models/todo');
 
 // get all todo items in the db
-todoRoutes.get('/todo/', function(req, res, next) {
+todoRoutes.get('/todo/', (req, res, next) => {
   Todo.find(function(err, todos) {
     if (err) {
       return next(new Error(err));
     }
 
-    res.json(todos); // return all todos
+    return res.json(todos); // return all todos
   });
 });
 
 // get all todo items in the db
-todoRoutes.get('/todo/:id', function(req, res, next) {
-  var id = req.params.id;
+todoRoutes.get('/todo/:id', (req, res, next) => {
+  const { id } = req.params;
 
   Todo.findById(id, function(error, todo) {
     if (error) {
       return next(new Error('Todo was not found'));
-    } else {
-      res.status(200).json(todo);
     }
+
+    return res.status(200).json(todo);
   });
 });
 
 // update a todo item
-todoRoutes.put('/todo/:id', function(req, res, next) {
-  var id = req.params.id;
+todoRoutes.put('/todo/:id', function(req, res) {
+  const { id } = req.params;
 
-  Todo.findById(id, function(error, todo) {
-    if (error) {
-      return next(new Error('Todo was not found'));
+  Todo.findByIdAndUpdate(id, req.body, (err, todo) => {
+    if (err) {
+      res.status(400).send('Unable to update todo');
     } else {
-      todo.name = req.body.name;
-      todo.done = req.body.done;
-
-      todo.save(function(error, todo) {
-        if (error) {
-          res.status(400).send('Unable to update todo');
-        } else {
-          res.status(200).json(todo);
-        }
-      });
+      res.status(200).json(todo);
     }
   });
 });
@@ -66,14 +58,15 @@ todoRoutes.post('/todo/', function(req, res) {
 });
 
 // delete a todo item
-todoRoutes.delete('/todo/:id', function(req, res, next) {
-  var id = req.params.id;
+todoRoutes.delete('/todo/:id', (req, res, next) => {
+  const { id } = req.params;
 
-  Todo.findByIdAndRemove(id, function(err) {
+  Todo.findByIdAndRemove(id, (err, todo) => {
     if (err) {
       return next(new Error('Todo was not found'));
     }
-    res.json('Successfully removed');
+
+    return res.status(200).send(todo);
   });
 });
 

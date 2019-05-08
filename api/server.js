@@ -1,15 +1,18 @@
-var express = require('express');
-var morgan = require('morgan');
-var path = require('path');
-var app = express();
-var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
+const express = require('express');
+const morgan = require('morgan');
+const path = require('path');
 
-var todoRoutes = require('./routes/todo');
+const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const expressSession = require('express-session');
+
+const todoRoutes = require('./routes/todo');
+const userRoutes = require('./routes/user');
 // Require configuration file defined in app/Config.js
-var config = require('./config');
+const config = require('./config');
 
-var port = config.APP_PORT || 4000;
+const port = config.APP_PORT || 4000;
 
 // Connect to database
 mongoose.connect(config.DB, {
@@ -21,8 +24,16 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  expressSession({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+  })
+);
 
-app.use('/api', function(req, res, next) {
+app.use('/api', (req, res, next) => {
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -43,13 +54,27 @@ app.use('/api', function(req, res, next) {
 });
 
 //  Use routes defined in Route.js
+app.use(userRoutes);
+
+app.use('/api', function(req, res, next) {
+  if (!req.session.user) return res.sendStatus(401);
+
+  next();
+});
 app.use('/api', todoRoutes);
 
 // handle 404s
 // eslint-disable-next-line
-app.get(function(req, res, next) {
-  res.sendStatus(404);
+app.get((req, res, next) => {
+  next(new Error({ status: 404 }));
+});
+
+// error handler
+// eslint-disable-next-line
+app.use(function(err, req, res, next) {
+  console.error(err);
+  res.sendStatus(err.status || 500);
 });
 
 app.listen(port); // Listen on port defined in config file
-console.log('App listening on port ' + port);
+console.log(`App listening on port ${port}`);

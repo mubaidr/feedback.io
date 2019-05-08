@@ -1,7 +1,6 @@
-var mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-// Define collection and schema for todo item
-var todo = new mongoose.Schema(
+const todo = new Schema(
   {
     name: {
       type: String
@@ -15,4 +14,4 @@ var todo = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Todo', todo);
+module.exports = model('Todo', todo);
