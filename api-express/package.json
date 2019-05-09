@@ -1,0 +1,42 @@
+{
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/mubaidr/feedback.io/issues"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "mongoose": "^5.5.5",
+    "morgan": "^1.9.1"
+  },
+  "description": "Gather in-app user feedback and contact requests with screen-shot, browser information and more.",
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.11.0",
+    "node-dev": "^4.0.0"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "homepage": "https://github.com/mubaidr/feedback.io#readme",
+  "license": "ISC",
+  "main": "server.js",
+  "name": "feedback.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mubaidr/feedback.io.git"
+  },
+  "scripts": {
+    "dev": "node-dev server.js --dedupe --no-notify",
+    "lint": "eslint . --fix",
+    "start": "node server.js"
+  },
+  "version": "1.0.0"
+}
